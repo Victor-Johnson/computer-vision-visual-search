@@ -1,0 +1,22 @@
+# First commmand 
+conda create -n "cv-ml" python=3.9 
+
+# Activate the environment
+conda activate cv-ml 
+
+# Install necessary packages
+conda install -c conda-forge opencv scikit-learn matplotlib jupyterlab
+opencv-python
+numpy
+scikit-learn
+matplotlib
+scipy
+tqdm
+pillow
+streamlit
+pip install ipykernel
+
+# Make it a kernel 
+python -m ipykernel install --user --name=firstEnv
+╰─ python -m ipykernel install --user --name=cv-ml
+Installed kernelspec cv-ml in /home/sally/.local/share/jupyter/kernels/cv-ml
