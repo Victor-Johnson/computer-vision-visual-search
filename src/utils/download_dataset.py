@@ -27,4 +27,6 @@ def download_and_unzip(url: str, extract_to: str = "data/Images") -> None:
 
 #%%
 if __name__ == "__main__":
-    download_and_unzip(FILE_URL, "/home/sally/Desktop/Desktop/coursework/computervision/visual-image-search/data/data")
+    download_and_unzip(FILE_URL, "/home/sally/Desktop/coursework/CV/computer-vision-visual-search/data")
+
+# %%
