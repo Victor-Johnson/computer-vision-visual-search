@@ -1,5 +1,5 @@
 # ============================================
-# Streamlit App — Visual Search Engine (Final)
+# Streamlit App — Visual Search Engine 
 # ============================================
 import streamlit as st
 import numpy as np
@@ -7,13 +7,15 @@ import cv2, pickle, time, random
 from pathlib import Path
 from io import BytesIO
 from PIL import Image
+from utils.paths import IMAGES as DATA_DIR, DESCRIPTORS
+
 
 # ============ Project Paths ============
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data" / "MSRC_ObjCategImageDatabase_v2" / "Images"
-DESC_PATH = ROOT / "data" / "Descriptors" / "HSV_PCA_SAFE.pkl"
+DESC_PATH = DESCRIPTORS / "HSV_PCA_SAFE.pkl"
 
-# ============ Load Safe Descriptors ============
+# ============ Loading Safe Descriptors ============
 @st.cache_resource
 def load_descriptors():
     with open(DESC_PATH, "rb") as f:
@@ -86,12 +88,12 @@ def rank(query_vec, desc_db, dist_fn, top_k=10):
     distances.sort(key=lambda x: x[1])
     return distances[:min(top_k, len(distances))]
 
-# ============ Streamlit UI ============
+# ============ Streamlit UI Components ============
 st.set_page_config(page_title="Visual Search Engine", layout="wide")
 st.title("🔍 Visual Search Engine")
 st.caption("Search visually similar images using PCA-reduced colour histograms.")
 
-# Sidebar controls
+# =========================== Sidebar controls ==========================>
 st.sidebar.header("⚙️ Settings")
 metric_choice = st.sidebar.selectbox("Similarity Metric", list(metric_funcs.keys()), index=5)
 top_k = st.sidebar.slider("Top-K results", 5, 20, 10)
