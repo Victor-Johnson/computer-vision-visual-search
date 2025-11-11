@@ -1,0 +1,21 @@
+# 1. Create and activate virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On macOS/Linux
+# OR
+venv\Scripts\activate     # On Windows PowerShell
+
+# 2. Install dependencies
+pip install --upgrade pip
+pip install -r requirements.txt  # or manually install core libs
+
+# 3.Download dataset manually
+cd data
+# or manually download and add the dataset to the directory
+wget http://download.microsoft.com/download/3/3/9/339D8A24-47D7-412F-A1E8-1A415BC48A15/msrc_objcategimagedatabase_v2.zip
+unzip msrc_objcategimagedatabase_v2.zip -d MSRC_ObjCategImageDatabase_v2
+cd ..
+
+# 4. Run notebook or app
+jupyter notebook notebooks/image_retrival.ipynb
+# OR
+streamlit run src/streamlit_app.py
