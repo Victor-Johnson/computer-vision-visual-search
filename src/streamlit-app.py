@@ -7,6 +7,7 @@ import cv2, pickle, time, random
 from pathlib import Path
 from io import BytesIO
 from PIL import Image
+import warnings, logging
 from utils.paths import IMAGES as DATA_DIR, DESCRIPTORS
 
 
@@ -28,9 +29,29 @@ def load_descriptors():
 desc_db, pca_mean, pca_components = load_descriptors()
 
 # ============ Helper Functions ============
+warnings.filterwarnings("ignore")
+logging.getLogger("tornado").setLevel(logging.ERROR)
+
 def safe_imread(path):
+    """
+    Safely read an image file.
+    - Skips ground-truth masks (*_GT.bmp)
+    - Falls back to Pillow if OpenCV fails
+    - Returns None if image cannot be loaded
+    """
+    path = Path(path)
+    if "_GT" in path.name:
+        return None  # skip segmentation masks
+
     img = cv2.imread(str(path))
-    return None if img is None else cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    if img is None:
+        try:
+            img = np.array(Image.open(path).convert("RGB"))
+            return img
+        except Exception as e:
+            print(f"⚠️ Failed to read {path.name}: {e}")
+            return None
+    return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 def pca_transform(x, mean, components):
     x_centered = x - mean
@@ -155,4 +176,4 @@ if 'qv_pca' in locals():
         if img is not None:
             cols[i % 5].image(img, caption=f"{i+1}. {name}\n{metric_choice}={dist:.3f}", use_container_width=True)
 
-st.sidebar.caption("Built with 🧠 Streamlit, OpenCV, NumPy, and PCA By ME !!")
+st.sidebar.caption("Built with  Streamlit, OpenCV, NumPy, and PCA By ME !!")
