@@ -1,0 +1,77 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: visual-search-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          DEPLOY_SHA: ${{ github.sha }}
+          DEPLOY_PATH: ${{ vars.VPS_DEPLOY_PATH }}
+          PROXY_NETWORK: ${{ vars.VPS_PROXY_NETWORK }}
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          fingerprint: ${{ secrets.VPS_HOST_FINGERPRINT }}
+          port: ${{ vars.VPS_PORT || '22' }}
+          command_timeout: 20m
+          envs: DEPLOY_SHA,DEPLOY_PATH,PROXY_NETWORK
+          script: |
+            bash -se <<'DEPLOY'
+            set -euo pipefail
+            cd "${DEPLOY_PATH:-$HOME/computer-vision-visual-search}"
+
+            if [ "$(git branch --show-current)" != main ]; then
+              echo 'The VPS checkout must be on main.' >&2
+              exit 1
+            fi
+            git diff --quiet
+            git diff --cached --quiet
+            git fetch origin main
+
+            # A queued/manual run must never replace a newer main deployment.
+            if [ "$(git rev-parse origin/main)" != "$DEPLOY_SHA" ]; then
+              echo 'Skipping: this commit is no longer the tip of main.'
+              exit 0
+            fi
+            git merge --ff-only "$DEPLOY_SHA"
+            if [ "$(git rev-parse HEAD)" != "$DEPLOY_SHA" ]; then
+              echo 'VPS checkout differs from the requested commit.' >&2
+              exit 1
+            fi
+
+            export IMAGE_TAG="$DEPLOY_SHA"
+            compose=(docker compose -f compose.yaml)
+            if [ -n "${PROXY_NETWORK:-}" ]; then
+              export PROXY_NETWORK
+              docker network inspect "$PROXY_NETWORK" >/dev/null
+              compose+=(-f deploy/compose.npm.yaml)
+            fi
+
+            "${compose[@]}" config --quiet
+            "${compose[@]}" build app
+            # First deploy downloads data; subsequent deploys reuse the volume.
+            "${compose[@]}" --profile setup run --rm --no-build prepare
+            if ! "${compose[@]}" up -d --no-build --wait --wait-timeout 120 app; then
+              "${compose[@]}" logs --tail=100 app
+              exit 1
+            fi
+            "${compose[@]}" ps app
+            echo "Deployed $DEPLOY_SHA successfully."
+            DEPLOY

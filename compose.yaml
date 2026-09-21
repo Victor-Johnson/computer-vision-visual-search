@@ -1,0 +1,26 @@
+x-app: &app
+  image: visual-search:${IMAGE_TAG:-local}
+  build: .
+  volumes:
+    - visual-search-data:/app/data
+  environment:
+    VISUAL_SEARCH_DATA: /app/data
+  security_opt:
+    - no-new-privileges:true
+
+services:
+  app:
+    <<: *app
+    ports:
+      - "127.0.0.1:8501:8501"
+    restart: unless-stopped
+  prepare:
+    <<: *app
+    profiles: [setup]
+    command: ["python", "src/utils/download_dataset.py"]
+    restart: "no"
+    healthcheck:
+      disable: true
+
+volumes:
+  visual-search-data:

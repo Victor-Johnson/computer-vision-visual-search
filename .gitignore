@@ -175,3 +175,7 @@ pyrightconfig.json
 
 /data/MSRC_ObjCategImageDatabase_v2
 
+
+# Rebuilt runtime features and local browser test artifacts
+/data/cache/
+/test-results/

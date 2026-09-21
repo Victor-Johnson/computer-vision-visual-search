@@ -1,0 +1,12 @@
+# Use with: docker compose -f compose.yaml -f deploy/compose.npm.yaml up -d
+services:
+  app:
+    networks:
+      default:
+      proxy:
+        aliases:
+          - visual-search
+networks:
+  proxy:
+    external: true
+    name: ${PROXY_NETWORK:-proxy}
