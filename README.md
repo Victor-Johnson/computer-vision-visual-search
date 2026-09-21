@@ -4,6 +4,9 @@ Content-based image retrieval system built on the MSRC-v2 dataset. Search for vi
 
 Built as part of the EEE3032 Computer Vision coursework.
 
+![Project Screenshot](demo/Kooha-2025-11-11-12-26-33.webm)
+
+
 ## Features
 
 - **Color histogram descriptors** — RGB and HSV with configurable bin resolutions (4x4x4, 8x8x8, 16x16x16)
