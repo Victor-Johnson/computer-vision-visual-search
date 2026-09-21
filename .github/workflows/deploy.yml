@@ -67,7 +67,7 @@ jobs:
             "${compose[@]}" config --quiet
             "${compose[@]}" build app
             # First deploy downloads data; subsequent deploys reuse the volume.
-            "${compose[@]}" --profile setup run --rm prepare
+            "${compose[@]}" --profile setup run --rm -T prepare </dev/null
             if ! "${compose[@]}" up -d --no-build --wait --wait-timeout 120 app; then
               "${compose[@]}" logs --tail=100 app
               exit 1
