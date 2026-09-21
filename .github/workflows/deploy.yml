@@ -22,7 +22,7 @@ jobs:
         uses: appleboy/ssh-action@v1.2.0
         env:
           DEPLOY_SHA: ${{ github.sha }}
-          DEPLOY_PATH: ${{ vars.VPS_DEPLOY_PATH }}
+          DEPLOY_PATH: ${{ vars.VPS_DEPLOY_PATH || '/home/victor/computer-vision-visual-search' }}
           PROXY_NETWORK: ${{ vars.VPS_PROXY_NETWORK }}
         with:
           host: ${{ secrets.VPS_HOST }}

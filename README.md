@@ -49,10 +49,10 @@ docker compose build
 docker compose --profile setup run --rm prepare
 docker compose up -d app
 docker compose ps
-curl -f http://127.0.0.1:8501/_stcore/health
+curl -f http://127.0.0.1:8502/_stcore/health
 ```
 
-The app binds to **127.0.0.1:8501**, ready for your reverse proxy. Dataset images and rebuildable feature caches live in the `visual-search-data` named volume. Restarts do not need network access. Avoid `docker compose down -v` unless you intend to delete that data.
+The Docker app binds to **127.0.0.1:8502**, avoiding the housing app on port 8501. Inside the container, Streamlit still listens on **8501**; Nginx Proxy Manager uses that internal port over the shared Docker network. Dataset images and rebuildable feature caches live in the `visual-search-data` named volume. Restarts do not need network access. Avoid `docker compose down -v` unless you intend to delete that data.
 
 For an offline archive on the VPS:
 
@@ -66,7 +66,7 @@ The health endpoint checks that Streamlit is serving; it does not prove dataset 
 
 ### Host-based Nginx
 
-Use a dedicated hostname, such as `visual-search.example.com`, pointing at your VPS. Add the location block in [`deploy/nginx.conf`](deploy/nginx.conf) to your existing HTTPS server configuration and retain your certificate settings. It forwards to localhost:8501, supports WebSockets, and allows 10 MB image uploads with request overhead. Validate with `nginx -t` before reloading Nginx.
+Use a dedicated hostname, such as `visual-search.example.com`, pointing at your VPS. Add the location block in [`deploy/nginx.conf`](deploy/nginx.conf) to your existing HTTPS server configuration and retain your certificate settings. It forwards to localhost:8502, supports WebSockets, and allows 10 MB image uploads with request overhead. Validate with `nginx -t` before reloading Nginx.
 
 ### Nginx Proxy Manager in Docker
 
@@ -111,7 +111,7 @@ In **GitHub → Settings → Secrets and variables → Actions**, configure:
 | Secret | `VPS_USER` | SSH deployment user |
 | Secret | `VPS_SSH_KEY` | Private SSH key whose public key is authorized on the VPS |
 | Secret | `VPS_HOST_FINGERPRINT` | SHA256 SSH host-key fingerprint, obtained from your trusted server console |
-| Variable | `VPS_DEPLOY_PATH` | Optional absolute checkout path; defaults to `~/computer-vision-visual-search` on the server |
+| Variable | `VPS_DEPLOY_PATH` | Optional absolute checkout path; defaults to `/home/victor/computer-vision-visual-search` |
 | Variable | `VPS_PORT` | Optional SSH port; defaults to `22` |
 | Variable | `VPS_PROXY_NETWORK` | For Nginx Proxy Manager, its existing Docker network name; leave empty for host-based Nginx |
 
@@ -167,6 +167,8 @@ python -m pytest -q
 python -m playwright install chromium
 # With the app running and the collection prepared:
 python tests/browser_smoke.py
+# For the Docker app:
+VISUAL_SEARCH_URL=http://127.0.0.1:8502 python tests/browser_smoke.py
 ```
 
 Tests cover numerical correctness, PCA transforms, metric restrictions, deterministic ranking, uploads, masks, cache rebuilding, safe archive handling, incomplete data, and Streamlit session interactions. The browser smoke script checks actual file uploads, desktop/mobile layouts, and captures the screenshots used here. Set `VISUAL_SEARCH_URL` to test a deployed hostname, including its reverse proxy.
