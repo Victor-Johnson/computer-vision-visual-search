@@ -6,11 +6,11 @@ Real captures of the running black-and-red application, using the MSRC-v2 collec
 | --- | --- | --- |
 | `visual-search-hero.png` | GitHub introduction or portfolio opening | A black-and-red image-search interface lets visitors explore a collection through colour. |
 | `visual-search-desktop.png` | Full product overview | From sample query to ranked neighbours: the complete visual search experience. |
-| `visual-search-compare.png` | Engineering discussion | Two retrieval methods share the same query, with overlapping matches labelled for comparison. |
+| `visual-search-compare.png` | Engineering discussion | Two guided search approaches share the same photo, with overlapping matches labelled for comparison. |
 | `visual-search-how-it-works.png` | Case-study explanation | An accessible explanation connects image histograms, PCA, and distance-based retrieval. |
 | `visual-search-colour-analysis.png` | Technical detail image | Interactive RGB distributions explain the query's colour signature and the limits of global histograms. |
 | `visual-search-mobile.png` | Responsive design section | The same gallery and retrieval workflow adapts to a narrow mobile screen. |
-| `visual-search-mobile-cover.png` | Mobile preview thumbnail | Mobile landing view with a compact two-column example gallery. |
+| `visual-search-mobile-cover.png` | Mobile preview thumbnail | Choose a photo first using the compact two-column mobile example gallery. |
 
 ## Portfolio copy starter
 

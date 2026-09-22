@@ -11,10 +11,12 @@ Full desktop and mobile captures, plus suggested portfolio captions, are in [`st
 ## Try the experience
 
 - Choose one of six example images, try a random query, or upload your own photo.
-- Follow a result with **Search from this image** without losing your method settings.
-- Compare two independently configured methods; shared matches are labelled.
+- Follow a result with **Find photos like this** without losing your method settings.
+- Compare **Full colour detail** with **Simplified colour pattern**; photos found by both searches are labelled.
 - Explore an interactive RGB distribution chart and an explanation of the pipeline.
-- Adjust RGB/HSV, 4/8 bins per channel, PCA, six distance metrics, and 5–20 results.
+- Start with 10 matches and use **Show more** for up to 20. Algorithm controls and numerical details are optional.
+
+Search starts only after you choose a photo. **Change photo** reopens the picker while retaining current results. Advanced settings preserve RGB/HSV, bin counts, PCA, and six compatible distance metrics.
 
 The default is HSV, 8 bins per channel, no PCA, Bhattacharyya distance, and 10 results. Images uploaded by visitors remain in their Streamlit session; the app does not write them to disk or send them to an inference service.
 

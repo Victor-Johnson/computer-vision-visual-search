@@ -179,3 +179,6 @@ pyrightconfig.json
 # Rebuilt runtime features and local browser test artifacts
 /data/cache/
 /test-results/
+
+# Local CRM copy and upload assets
+/crm/
